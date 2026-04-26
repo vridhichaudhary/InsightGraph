@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #0F172A;
+  --accent-cyan: #38BDF8;
+  --accent-indigo: #818CF8;
+  --neutral: #94A3B8;
+  --font-inter: "Inter", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--neutral);
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1E293B;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Shimmer animation for skeleton */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Recharts overrides for dark theme */
+.recharts-surface {
+  overflow: visible;
+}
+.recharts-legend-item-text {
+  color: #94A3B8 !important;
+  font-size: 12px !important;
+}

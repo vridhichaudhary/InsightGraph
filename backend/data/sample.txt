@@ -1,0 +1,5 @@
+Llama 3 is an open-source model developed by Meta. Its 70B parameter version scores 82.0 on MMLU, 81.7 on HumanEval, 93.0 on GSM8K, and 88.0 on HellaSwag.
+
+GPT-4o is a proprietary flagship model by OpenAI. It scores 88.7 on MMLU, 90.2 on HumanEval, 97.1 on GSM8K, and 95.3 on HellaSwag.
+
+In 2019, Transformer models averaged around 1.5 billion parameters. By 2020, GPT-3 reached 175 billion. By 2022, models scaled to 540 billion (PaLM). By 2024, some dense models approached 1.8 trillion parameters.
