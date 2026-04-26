@@ -21,10 +21,8 @@ app = FastAPI(
 # Allow Next.js dev server and production origin
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://insight-graph.vercel.app",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
