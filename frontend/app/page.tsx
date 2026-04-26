@@ -52,7 +52,7 @@ export default function HomePage() {
 
     eventSourceRef.current?.close();
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://insightgraph-0lvs.onrender.com";
     const url = `${apiUrl}/stream?query=${encodeURIComponent(query)}&session_id=${sid}`;
     const source = new EventSource(url);
     eventSourceRef.current = source;
@@ -80,7 +80,7 @@ export default function HomePage() {
 
     source.onerror = () => {
       source.close();
-      setErrorMessage("Stream disconnected. Check that the FastAPI backend is running on port 8000.");
+      setErrorMessage("Stream disconnected. Check that the InsightGraph API is online.");
       setAppState("error");
       appendLog("Connection lost.", "System");
     };
@@ -89,7 +89,7 @@ export default function HomePage() {
   const handleResume = async () => {
     setAppState("streaming");
     appendLog("User approved. Resuming pipeline...", "System");
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://insightgraph-0lvs.onrender.com";
     try {
       await fetch(`${apiUrl}/resume`, {
         method: "POST",

@@ -64,7 +64,7 @@ export default function ChartDisplay({ data, sessionId }: Props) {
   });
 
   const handleDownload = () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://insightgraph-0lvs.onrender.com";
     window.location.href = `${apiUrl}/download?session_id=${sessionId}`;
   };
 

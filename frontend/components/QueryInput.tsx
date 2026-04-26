@@ -42,7 +42,7 @@ export default function QueryInput({ onSubmit, loading }: Props) {
     formData.append("file", file);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://insightgraph-0lvs.onrender.com";
       const res = await fetch(`${apiUrl}/upload`, { method: "POST", body: formData });
       setUploadStatus(res.ok ? "success" : "error");
       setTimeout(() => setUploadStatus("idle"), 3000);
