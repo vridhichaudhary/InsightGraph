@@ -1,58 +1,96 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #0F172A;
-  --accent-cyan: #38BDF8;
-  --accent-indigo: #818CF8;
-  --neutral: #94A3B8;
-  --font-inter: "Inter", sans-serif;
+  --font-geist: "Geist", sans-serif;
+  --font-mono: "Geist Mono", monospace;
+  --cyan: #22D3EE;
+  --indigo: #818CF8;
+  --surface: #0F1623;
+  --surface-2: #151D2E;
+  --border: rgba(255,255,255,0.06);
+  --border-hover: rgba(255,255,255,0.12);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+* { box-sizing: border-box; }
 
 body {
-  background-color: var(--bg-primary);
-  color: var(--neutral);
-  font-family: var(--font-inter);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-geist);
+  background: #080C14;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #1E293B;
-}
-::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 99px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #475569;
-}
+/* ── Scrollbars ──────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
 
-/* Shimmer animation for skeleton */
+/* ── Animations ──────────────────────────────────────── */
 @keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
 }
 
-/* Recharts overrides for dark theme */
-.recharts-surface {
-  overflow: visible;
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.75); }
 }
-.recharts-legend-item-text {
-  color: #94A3B8 !important;
-  font-size: 12px !important;
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes grid-pulse {
+  0%, 100% { opacity: 0.03; }
+  50%       { opacity: 0.06; }
+}
+
+.animate-fade-up   { animation: fade-up 0.5s ease both; }
+.animate-slide-in  { animation: slide-in-right 0.3s ease both; }
+.animate-shimmer   {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+}
+.cursor-blink { animation: cursor-blink 1s step-end infinite; }
+
+/* ── Grid background ─────────────────────────────────── */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── Glow effects ────────────────────────────────────── */
+.glow-cyan  { box-shadow: 0 0 20px rgba(34,211,238,0.15); }
+.glow-indigo { box-shadow: 0 0 20px rgba(129,140,248,0.15); }
+
+/* ── Glass surfaces ──────────────────────────────────── */
+.glass {
+  background: rgba(15, 22, 35, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+.glass-hover:hover {
+  border-color: var(--border-hover);
+  background: rgba(15, 22, 35, 0.85);
+}
+
+/* ── Agent badge colors ──────────────────────────────── */
+.agent-supervisor { color: #C084FC; }
+.agent-researcher  { color: #34D399; }
+.agent-analyst     { color: #FB923C; }
+.agent-visualizer  { color: #22D3EE; }
+.agent-system      { color: #94A3B8; }
+.agent-fallback    { color: #F87171; }

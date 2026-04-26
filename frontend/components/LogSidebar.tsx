@@ -11,13 +11,27 @@ export interface LogMessage {
 
 interface Props {
   logs: LogMessage[];
-  isOpen?: boolean;
+  isActive?: boolean;
 }
 
-export default function LogSidebar({ logs, isOpen = true }: Props) {
+const AGENT_CONFIG: Record<string, { color: string; abbr: string }> = {
+  supervisor:  { color: "#C084FC", abbr: "SUP" },
+  researcher:  { color: "#34D399", abbr: "RES" },
+  analyst:     { color: "#FB923C", abbr: "ANA" },
+  visualizer:  { color: "#22D3EE", abbr: "VIZ" },
+  system:      { color: "#64748B", abbr: "SYS" },
+  fallback:    { color: "#F87171", abbr: "ERR" },
+};
+
+function getAgentConfig(agent?: string) {
+  if (!agent) return AGENT_CONFIG["system"];
+  const key = agent.toLowerCase();
+  return AGENT_CONFIG[key] ?? AGENT_CONFIG["system"];
+}
+
+export default function LogSidebar({ logs, isActive = false }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom on new logs
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
@@ -27,57 +41,113 @@ export default function LogSidebar({ logs, isOpen = true }: Props) {
     }
   }, [logs]);
 
-  if (!isOpen) return null;
-
-  const getAgentColor = (agent?: string) => {
-    if (!agent) return "text-indigo-400";
-    const lower = agent.toLowerCase();
-    if (lower === "supervisor") return "text-fuchsia-400";
-    if (lower === "researcher") return "text-emerald-400";
-    if (lower === "analyst") return "text-orange-400";
-    if (lower === "visualizer") return "text-cyan-400";
-    return "text-indigo-400";
-  };
-
   return (
-    <div className="flex flex-col h-full bg-[#0B1120] border-l border-slate-800/60 w-full sm:w-80 md:w-96 flex-shrink-0">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-800/60 bg-slate-900/50">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" strokeWidth="2">
-          <polyline points="4 17 10 11 4 5" />
-          <line x1="12" y1="19" x2="20" y2="19" />
-        </svg>
-        <span className="text-xs font-semibold text-slate-300 uppercase tracking-widest">
-          Thought Stream
-        </span>
+    <aside className="hidden xl:flex flex-col w-72 2xl:w-80 flex-shrink-0 border-l border-white/[0.05] bg-[#070B12]">
+
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-4 border-b border-white/[0.05]">
+        <div className="flex items-center gap-2">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" strokeWidth="2" strokeLinecap="round">
+            <polyline points="4 17 10 11 4 5" /><line x1="12" y1="19" x2="20" y2="19" />
+          </svg>
+          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-[0.12em] font-mono">
+            Thought Stream
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          {isActive && (
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+          )}
+          <span className="text-[10px] text-slate-600 font-mono">{logs.length} events</span>
+        </div>
       </div>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 font-mono text-xs">
+      {/* Legend row */}
+      <div className="flex items-center gap-3 px-4 py-2 border-b border-white/[0.03] flex-wrap">
+        {Object.entries(AGENT_CONFIG).slice(0, 4).map(([key, cfg]) => (
+          <div key={key} className="flex items-center gap-1">
+            <span className="text-[9px] font-mono font-bold" style={{ color: cfg.color }}>{cfg.abbr}</span>
+          </div>
+        ))}
+        <span className="text-[9px] text-slate-600 font-mono ml-auto">color = agent</span>
+      </div>
+
+      {/* Log feed */}
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto p-4 space-y-1 font-mono text-[11px] leading-relaxed"
+      >
         {logs.length === 0 ? (
-          <div className="text-slate-600 italic">Waiting for queries...</div>
-        ) : (
-          logs.map((log, index) => (
-            <div
-              key={log.id}
-              className={`flex gap-2 animate-in fade-in slide-in-from-bottom-2 duration-300 ${
-                index === logs.length - 1 ? "text-cyan-400" : "text-slate-400"
-              }`}
-            >
-              <span className="text-slate-600 flex-shrink-0">[{log.timestamp}]</span>
-              <span className={`${getAgentColor(log.agent)} flex-shrink-0 font-semibold`}>
-                [{log.agent || "System"}]
-              </span>
-              <span className="break-words">{log.message}</span>
+          <div className="flex flex-col items-center justify-center h-32 gap-3">
+            <div className="flex gap-1">
+              {[0, 1, 2].map((i) => (
+                <span
+                  key={i}
+                  className="w-1 h-1 rounded-full bg-slate-700"
+                  style={{ animation: `pulse-dot 1.4s ease-in-out ${i * 0.2}s infinite` }}
+                />
+              ))}
             </div>
-          ))
+            <p className="text-slate-600 italic text-[10px]">Awaiting query...</p>
+          </div>
+        ) : (
+          logs.map((log, idx) => {
+            const cfg = getAgentConfig(log.agent);
+            const isLatest = idx === logs.length - 1;
+            return (
+              <div
+                key={log.id}
+                className={`flex gap-2 animate-slide-in transition-opacity ${
+                  isLatest ? "opacity-100" : "opacity-60 hover:opacity-100"
+                }`}
+              >
+                {/* Timestamp */}
+                <span className="text-slate-700 flex-shrink-0 select-none">{log.timestamp}</span>
+
+                {/* Agent badge */}
+                <span
+                  className="flex-shrink-0 font-bold select-none w-[28px]"
+                  style={{ color: cfg.color }}
+                >
+                  [{cfg.abbr}]
+                </span>
+
+                {/* Message */}
+                <span className={`break-words min-w-0 ${isLatest ? "text-slate-200" : "text-slate-500"}`}>
+                  {log.message}
+                </span>
+              </div>
+            );
+          })
         )}
-        
-        {/* Pulsing cursor if waiting for more */}
-        {logs.length > 0 && logs[logs.length - 1].message !== "Chart rendered." && (
-          <div className="flex gap-2 text-cyan-400">
-            <span className="w-2 h-4 bg-cyan-400 animate-pulse" />
+
+        {/* Blinking cursor when active */}
+        {isActive && logs.length > 0 && (
+          <div className="flex gap-2 mt-1">
+            <span className="text-slate-700">▸</span>
+            <span className="w-1.5 h-[13px] bg-cyan-400 cursor-blink" />
           </div>
         )}
       </div>
-    </div>
+
+      {/* Stats bar */}
+      <div className="border-t border-white/[0.05] px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex gap-3">
+            {["Supervisor","Researcher","Analyst","Visualizer"].map((agent) => {
+              const count = logs.filter(l => l.agent?.toLowerCase() === agent.toLowerCase()).length;
+              const cfg = getAgentConfig(agent);
+              return (
+                <div key={agent} className="text-center">
+                  <p className="text-[10px] font-bold font-mono" style={{ color: cfg.color }}>{count}</p>
+                  <p className="text-[9px] text-slate-700">{cfg.abbr}</p>
+                </div>
+              );
+            })}
+          </div>
+          <div className="text-[9px] text-slate-700 font-mono">events</div>
+        </div>
+      </div>
+    </aside>
   );
 }

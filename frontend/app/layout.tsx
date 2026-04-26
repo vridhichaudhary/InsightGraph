@@ -1,28 +1,30 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-geist",
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "InsightGraph — Technical Intelligence Dashboard",
+  title: "InsightGraph — Multi-Agent Intelligence",
   description:
-    "Ask any technical question and get instant AI-powered data visualizations powered by Google Gemini.",
-  keywords: ["AI dashboard", "data visualization", "Gemini", "technical insights"],
+    "Ask any technical question. Multi-agent AI researches, analyzes, and renders charts in real time.",
+  keywords: ["AI dashboard", "LangGraph", "multi-agent", "data visualization", "Gemini"],
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen bg-[#0F172A] text-slate-100 antialiased">
+    <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
+      <body className="min-h-screen bg-[#080C14] text-slate-100 antialiased overflow-hidden">
         {children}
       </body>
     </html>
