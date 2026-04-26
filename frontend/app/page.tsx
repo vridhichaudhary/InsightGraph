@@ -169,17 +169,19 @@ export default function HomePage() {
           </div>
         </header>
 
-        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col">
+        <main className={`flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 flex flex-col transition-all duration-700 ease-in-out py-8`}>
           
-          <div className="mb-8 w-full">
+          {appState === "idle" && <div className="flex-1" />}
+          
+          <div className={`w-full transition-all duration-700 ease-in-out ${appState === "idle" ? "scale-105" : "mb-8 scale-100"}`}>
             <div className="bg-slate-900/50 border border-slate-700/40 rounded-2xl p-4 sm:p-6 backdrop-blur-sm shadow-xl shadow-black/20">
               <QueryInput onSubmit={handleQuery} loading={appState === "streaming"} />
             </div>
           </div>
 
-          <div className="flex-1 relative flex flex-col justify-center min-h-[400px]">
+          <div className={`flex-1 relative flex flex-col justify-center min-h-[400px] transition-all duration-700 ${appState === "idle" ? "opacity-100" : "opacity-100"}`}>
             {appState === "idle" && (
-              <div className="flex flex-col items-center justify-center text-center space-y-4 w-full">
+              <div className="flex flex-col items-center justify-center text-center space-y-4 w-full -mt-8">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
                   LangGraph Multi-Agent System

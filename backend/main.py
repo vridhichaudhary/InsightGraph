@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes.stream import router as stream_router
 from routes.resume import router as resume_router
 from routes.download import router as download_router
+from routes.upload import router as upload_router
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(name)s | %(message)s")
 logger = logging.getLogger(__name__)
@@ -32,6 +33,7 @@ app.add_middleware(
 app.include_router(stream_router)
 app.include_router(resume_router)
 app.include_router(download_router)
+app.include_router(upload_router)
 
 
 @app.get("/health")
