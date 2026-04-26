@@ -1,139 +1,88 @@
-# InsightGraph 🔍📊
+# InsightGraph
 
-**Technical Intelligence Dashboard** — Ask any technical question and get AI-generated, interactive data visualizations powered by **Google Gemini 1.5 Flash**.
+InsightGraph is a production-grade Technical Intelligence Dashboard that leverages a Multi-Agent RAG (Retrieval-Augmented Generation) pipeline to research, analyze, and visualize complex technical data. Powered by Google Gemini 1.5 Flash and LangGraph, it autonomously decomposes queries, retrieves relevant documentation, executes sandboxed code for data extraction, and generates interactive charts.
 
----
+## Core Features
+
+- **Agentic RAG Pipeline**: Uses a four-agent state machine (Supervisor, Researcher, Analyst, Visualizer) to handle complex research tasks.
+- **Document Ingestion**: Supports uploading and indexing `.txt`, `.md`, `.pdf`, and `.csv` files into a ChromaDB vector store.
+- **Sandboxed Analysis**: The Analyst agent writes and executes Python code in a restricted environment to extract structured data from unstructured research.
+- **Real-time Thought Stream**: Monitor the agents' step-by-step progress through a live SSE (Server-Sent Events) sidebar.
+- **Interactive Visualizations**: Dynamic bar and line charts built with Recharts, featuring confidence scoring and source attribution.
+- **Human-in-the-Loop**: Pipeline pauses after data extraction for user approval before generating the final visualization.
+- **CSV Export**: Download the raw structured data extracted by the Analyst for external use.
 
 ## Tech Stack
 
-| Layer    | Technology                         |
-|----------|------------------------------------|
-| Frontend | Next.js 14, Tailwind CSS, Recharts |
-| Backend  | FastAPI, Pydantic                  |
-| LLM      | Google Gemini 1.5 Flash            |
+- **Frontend**: Next.js 15, Tailwind CSS 4, Framer Motion, Recharts.
+- **Backend**: FastAPI, LangGraph, LangChain, sse-starlette.
+- **AI/ML**: Google Gemini 1.5 Flash, Google Generative AI Embeddings.
+- **Database**: ChromaDB (Vector Store).
 
----
+## Multi-Agent Architecture
 
-## Folder Structure
+1. **Supervisor**: Decomposes the user query into specific research subtasks.
+2. **Researcher**: Queries the ChromaDB vector store for relevant document chunks.
+3. **Analyst**: Writes Python code to extract numeric data from the research findings. Executes code in a restricted sandbox.
+4. **Visualizer**: Transforms the structured data into a valid JSON schema for Recharts.
 
-```
-InsightGraph/
-├── backend/
-│   ├── main.py
-│   ├── routes/query.py
-│   ├── services/
-│   │   ├── llm_service.py     ← Gemini API + fallback
-│   │   └── mock_service.py    ← Hardcoded demo data
-│   ├── models/schemas.py
-│   ├── requirements.txt
-│   └── .env.example
-├── frontend/
-│   ├── app/
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   └── globals.css
-│   ├── components/
-│   │   ├── QueryInput.tsx
-│   │   ├── ChartDisplay.tsx
-│   │   ├── LoadingSkeleton.tsx
-│   │   └── ErrorCard.tsx
-│   ├── lib/api.ts
-│   └── .env.local.example
-└── .gitignore
-```
+## Setup Instructions
 
----
+### Backend (FastAPI)
 
-## Setup
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Create and activate a virtual environment:
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Configure environment variables in a `.env` file:
+   ```env
+   GEMINI_API_KEY=your_google_gemini_api_key
+   ```
+5. Start the server:
+   ```bash
+   uvicorn main:app --reload --port 8000
+   ```
 
-### 1. Clone & Enter Repo
+### Frontend (Next.js)
 
-```bash
-git clone <your-repo-url>
-cd InsightGraph
-```
-
-### 2. Backend Setup
-
-```bash
-cd backend
-
-# Create virtual environment
-python3 -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-# Edit .env and add your GEMINI_API_KEY (optional — mock fallback works without it)
-
-# Start server
-uvicorn main:app --reload --port 8000
-```
-
-Backend will be live at **http://localhost:8000**
-Swagger docs at **http://localhost:8000/docs**
-
-### 3. Frontend Setup
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Configure environment
-cp .env.local.example .env.local
-# NEXT_PUBLIC_API_URL=http://localhost:8000 (default, no changes needed)
-
-# Start dev server
-npm run dev
-```
-
-Frontend will be live at **http://localhost:3000**
-
----
-
-## API
-
-### `POST /query`
-
-**Request:**
-```json
-{ "query": "Compare Llama 3 vs GPT-4o" }
-```
-
-**Response:**
-```json
-{
-  "chartType": "bar",
-  "title": "Llama 3 vs GPT-4o — Benchmark Comparison",
-  "labels": ["MMLU", "HumanEval", "GSM8K", "HellaSwag"],
-  "datasets": [
-    { "name": "Llama 3 (70B)", "data": [82, 81.7, 93, 88], "color": "#38BDF8" },
-    { "name": "GPT-4o",        "data": [88.7, 90.2, 97.1, 95.3], "color": "#818CF8" }
-  ]
-}
-```
-
----
-
-## Example Queries
-
-| Query | Chart Type |
-|---|---|
-| Compare Llama 3 vs GPT-4o benchmarks | Bar |
-| Python GitHub stars trend 2019–2024 | Line |
-| React vs Vue vs Svelte popularity | Bar |
-| AI model parameter growth over time | Line |
-
----
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure environment variables in `.env.local`:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8000
+   ```
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
 ## Environment Variables
 
 | Variable | Location | Description |
 |---|---|---|
-| `GEMINI_API_KEY` | `backend/.env` | Google Gemini API key (optional) |
-| `NEXT_PUBLIC_API_URL` | `frontend/.env.local` | Backend URL (default: `http://localhost:8000`) |
+| `GEMINI_API_KEY` | `backend/.env` | Required for AI agents and embeddings. |
+| `NEXT_PUBLIC_API_URL` | `frontend/.env.local` | The URL of your running backend. |
+
+## Deployment
+
+- **Backend**: Deployed on Render using the `uvicorn main:app --host 0.0.0.0 --port $PORT` command.
+- **Frontend**: Deployed on Vercel, pointing to the Render backend via `NEXT_PUBLIC_API_URL`.
+
+## License
+
+This project is licensed under the MIT License.
